@@ -16,7 +16,7 @@ def create_section(form, db, current_user: User):
     db.add(section)
     db.commit()
     db.refresh(section)
-    return {"message": "Section added to the database"}
+    return {"message": "Section added to the database","section_id":section.id}
 
 
 

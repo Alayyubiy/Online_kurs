@@ -21,14 +21,11 @@ def create_lesson(form, db, current_user):
 def update_lesson(ident, form, db, current_user):
     if current_user.role != 'admin':
         raise HTTPException(403, detail="Faqat admin yangilashi mumkin")
-
     lesson = db.query(Lesson).filter(Lesson.id == ident).first()
     if not lesson:
         raise HTTPException(404, detail="Lesson topilmadi")
-
     for key, value in form.dict(exclude_unset=True).items():
         setattr(lesson, key, value)
-
     db.commit()
     return {"message": "Lesson updated successfully"}
 

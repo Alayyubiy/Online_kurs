@@ -15,7 +15,7 @@ def create_courses(form, db, current_user):
     db.add(new_course)
     db.commit()
     db.refresh(new_course)
-    return {"message": "Course added to the database"}
+    return {"message": "Course added to the database","course_id":new_course.id}
 
 
 

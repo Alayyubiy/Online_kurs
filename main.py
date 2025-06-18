@@ -4,6 +4,7 @@ from routers.auth import login_router
 from routers.courses import courses_router
 from routers.user import user_router
 from routers.section import section_router
+from routers.lesson import lesson_router
 
 app = FastAPI(docs_url='/', title="ONLINEKURS")
 
@@ -11,6 +12,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(courses_router)
 app.include_router(section_router)
+app.include_router(lesson_router)
 app.include_router(user_router)
 app.include_router(login_router)
 

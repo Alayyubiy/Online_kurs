@@ -11,7 +11,7 @@ lesson_router = APIRouter(tags=["Lesson"])
 
 @lesson_router.get("/get_lesson")
 def get_lesson(db: Lesson = Depends(database)):
-    lesson = db.query(Lesson).options(joinedload(Lesson.section_id)).all()
+    lesson = db.query(Lesson).options(joinedload(Lesson.section)).all()
     return lesson
 
 

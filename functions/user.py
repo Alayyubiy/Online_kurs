@@ -15,7 +15,7 @@ def add_user(form, db):
     )
     db.add(new_user)
     db.commit()
-    return {"massage" : " User royxatdan o'tdi !!!"}
+    return {"massage" : " User royxatdan o'tdi !!!","user_id":new_user.id}
 
 
 def add_admin(form, db, current_user):
@@ -29,7 +29,7 @@ def add_admin(form, db, current_user):
         )
         db.add(new_user)
         db.commit()
-        return {"massage": " User royxatdan o'tdi !!!"}
+        return {"massage": " User royxatdan o'tdi !!!","user_id":new_user.id}
     else:
         return {"massage": "Sizga admin qoshishga ruxsat yo'q"}
 

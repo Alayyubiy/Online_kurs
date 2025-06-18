@@ -14,8 +14,8 @@ Base.metadata.create_all(bind=engine)
 app.include_router(courses_router)
 app.include_router(section_router)
 app.include_router(lesson_router)
-app.include_router(user_router)
 app.include_router(progress_router)
+app.include_router(user_router)
 app.include_router(login_router)
 
 

@@ -16,3 +16,9 @@ class Lesson(Base):
     progresses = relationship("Progress", back_populates="lesson", cascade="all, delete")
     quizzes = relationship("Quiz", back_populates="lesson", cascade="all, delete")
     test_histories = relationship("TestHistory", back_populates="lesson")
+
+    def __str__(self):
+        return f"{self.title}" if self.title  else "No course"
+
+    def __repr__(self):
+        return f"{self.title}" if self.title  else "No course"

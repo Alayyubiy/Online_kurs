@@ -12,3 +12,10 @@ class Section(Base):
 
     course = relationship("Course", back_populates="sections", cascade="all, delete")
     lessons = relationship("Lesson", back_populates="section", cascade="all, delete")
+
+
+    def __str__(self):
+        return f"{self.title}" if self.title  else "No course"
+
+    def __repr__(self):
+        return f"{self.title}" if self.title  else "No course"

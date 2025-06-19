@@ -18,3 +18,5 @@ class TestHistory(Base):
 
     user = relationship("User", back_populates="test_histories")
     lesson = relationship("Lesson", back_populates="test_histories")
+
+

@@ -11,3 +11,11 @@ class Quiz(Base):
     correct_answer = Column(String(255), nullable=False)
 
     lesson = relationship("Lesson", back_populates="quizzes")
+
+
+
+    def __str__(self):
+        return f"{self.lesson}" if self.lesson  else "No course"
+
+    def __repr__(self):
+        return f"{self.lesson}" if self.lesson  else "No course"

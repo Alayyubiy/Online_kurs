@@ -14,9 +14,3 @@ class Course(Base):
 
     sections = relationship("Section", back_populates="course")
     enrollments = relationship("Enrollment", back_populates="course")
-
-    def __str__(self):
-        return f"{self.name}" if self.name  else "No course"
-
-    def __repr__(self):
-        return f"{self.name}" if self.name  else "No course"

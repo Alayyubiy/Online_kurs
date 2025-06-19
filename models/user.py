@@ -15,3 +15,9 @@ class User(Base):
     enrollments = relationship("Enrollment", back_populates="user")
     progresses = relationship("Progress", back_populates="user")
     test_histories = relationship("TestHistory", back_populates="user")
+
+    def __str__(self):
+        return f"{self.name}" if self.name else "No course"
+
+    def __repr__(self):
+        return f"{self.name}" if self.name else "No course"

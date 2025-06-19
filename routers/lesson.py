@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session, joinedload
 from db import database
-from functions.lesson import update_lesson, delete_lesson, create_lesson
-from models import Lesson
+from functions.lesson import update_lesson, delete_lesson, create_lesson, upload_homework_file_url, upload_lesson_video
+from models import Lesson, User
 from routers.auth import get_current_user
 from schemas.lessons import CreateLessons, UpdateLessons
 from schemas.users import CreateUser
@@ -22,6 +22,20 @@ def add_lesson(form: CreateLessons, db: Session = Depends(database),
                current_user: CreateUser = Depends(get_current_user)):
     return create_lesson(form, db, current_user)
 
+
+@lesson_router.post("/upload_video/{lesson_id}")
+def route_upload_video(
+    lesson_id: int,
+    video: UploadFile = File(...),
+    db: Session = Depends(database),
+    current_user: User = Depends(get_current_user)
+):
+    return upload_lesson_video(lesson_id, video, db, current_user)
+
+@lesson_router.post('/create_image')
+def lesson_image(ident: int, file: UploadFile,db:Session = Depends(database),
+                    current_user: CreateUser = Depends(get_current_user)):
+    return upload_homework_file_url(ident,file,db,current_user)
 
 
 @lesson_router.put("/update_lesson")

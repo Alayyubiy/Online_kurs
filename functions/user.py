@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from models.user import User
 from routers.auth import get_password_hash
 
+
 def add_user(form, db):
     a = db.query(User).filter(User.username == form.username).first()
     if a:
@@ -34,6 +35,7 @@ def add_admin(form, db, current_user):
         return {"massage": "Sizga admin qoshishga ruxsat yo'q"}
 
 
+
 def update_user(ident, form, db, current_user):
     if current_user.role == 'admin':
         user = db.query(User).filter(User.id == ident).first()
@@ -52,6 +54,7 @@ def update_user(ident, form, db, current_user):
         return {"massage": "Sizga admin qoshishga ruxsat yo'q"}
 
 
+
 def update_own(form, db, current_user):
     db.query(User).filter(User.id == current_user.id).update({
         User.name: form.name.strip().capitalize(),
@@ -61,6 +64,7 @@ def update_own(form, db, current_user):
     })
     db.commit()
     return {"massage": "Profil tahrirlandi"}
+
 
 def delete_user(ident, db, current_user):
     if current_user.role == 'admin':
@@ -73,6 +77,7 @@ def delete_user(ident, db, current_user):
         return {"Message": "The users was deleted from the database.!!!"}
     else:
         return {"massage": "Sizga admin qoshishga ruxsat yo'q"}
+
 
 
 def delete_own(db, current_user):

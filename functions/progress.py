@@ -9,12 +9,11 @@ def create_progress(form, db: Session, current_user):
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Faqat adminlar ruxsat etiladi.")
 
-    # Oldin mavjudligini tekshirish
+
     existing = db.query(Progress).filter_by(user_id=form.user_id, lesson_id=form.lesson_id).first()
     if existing:
         raise HTTPException(status_code=400, detail="Bu progress allaqachon mavjud")
 
-    # Yangi progress yaratish
     new_progress = Progress(
         user_id=form.user_id,
         lesson_id=form.lesson_id,

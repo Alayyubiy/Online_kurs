@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from models.enrollment import Enrollment
 from datetime import datetime
 
+
+
 def enroll_user(form, db, current_user):
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Faqat adminlar foydalanuvchilarni kursga yozishi mumkin.")
@@ -24,11 +26,13 @@ def enroll_user(form, db, current_user):
     }
 
 
+
 def get_all_enrollments(db, current_user):
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Faqat adminlar ro'yxatni ko'rishi mumkin.")
 
     return db.query(Enrollment).all()
+
 
 
 def update_enrollment(ident, form, db, current_user):
@@ -48,6 +52,7 @@ def update_enrollment(ident, form, db, current_user):
         "message": "Enrollment muvaffaqiyatli yangilandi.",
         "data": enrollment
     }
+
 
 
 def delete_enrollment(ident, db, current_user):

@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from models.course import Course
 
 
+
 def create_courses(form, db, current_user):
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="You do not have admin rights!")
@@ -16,6 +17,7 @@ def create_courses(form, db, current_user):
     db.commit()
     db.refresh(new_course)
     return {"message": "Course added to the database","course_id":new_course.id}
+
 
 
 

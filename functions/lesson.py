@@ -1,6 +1,8 @@
 from fastapi import HTTPException
 from models.lesson import Lesson
 
+
+
 def create_lesson(form, db, current_user):
     if current_user.role != 'admin':
         raise HTTPException(403, detail="Sizga bu amalni bajarishga ruxsat yo'q")
@@ -18,6 +20,7 @@ def create_lesson(form, db, current_user):
     return {"message": "Lesson created successfully", "lesson_id": new_lesson.id}
 
 
+
 def update_lesson(ident, form, db, current_user):
     if current_user.role != 'admin':
         raise HTTPException(403, detail="Faqat admin yangilashi mumkin")
@@ -28,6 +31,7 @@ def update_lesson(ident, form, db, current_user):
         setattr(lesson, key, value)
     db.commit()
     return {"message": "Lesson updated successfully"}
+
 
 
 def delete_lesson(ident, db, current_user):

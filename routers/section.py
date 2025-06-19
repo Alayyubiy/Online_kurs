@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session, joinedload
-from models import Section
+from models import Section, User
 from schemas.sections import CreateSections, UpdateSections
 from db import database
 from functions.section import create_section,  update_section, delete_section
 from routers.auth import get_current_user
 from schemas.users import CreateUser
+from services.progress_logic import check_section_completion
 
 section_router = APIRouter(tags=["Sections"])
 
@@ -14,6 +15,14 @@ section_router = APIRouter(tags=["Sections"])
 def get_sections(db: Session = Depends(database)):
     sections = db.query(Section).options(joinedload(Section.lessons)).all()
     return sections
+
+
+@section_router.get("/check_section/{section_id}")
+def route_check_section(section_id: int,
+                        db: Session = Depends(database),
+                        current_user: User = Depends(get_current_user)):
+    return check_section_completion(current_user.id, section_id, db)
+
 
 
 @section_router.post('/create_section')

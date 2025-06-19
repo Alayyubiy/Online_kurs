@@ -1,3 +1,4 @@
+import pytz
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from db import Base
@@ -9,7 +10,7 @@ class Enrollment(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     course_id = Column(Integer, ForeignKey("courses.id"))
-    enrolled_at = Column(DateTime, default=datetime.utcnow)
+    enrolled_at = Column(DateTime, default=datetime.now(pytz.timezone("Asia/Tashkent")))
 
     user = relationship("User", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")

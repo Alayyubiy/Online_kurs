@@ -9,6 +9,7 @@ from schemas.users import CreateUser
 
 lesson_router = APIRouter(tags=["Lesson"])
 
+
 @lesson_router.get("/get_lesson")
 def get_lesson(db: Lesson = Depends(database)):
     lesson = db.query(Lesson).options(joinedload(Lesson.section)).all()
@@ -23,11 +24,11 @@ def add_lesson(form: CreateLessons, db: Session = Depends(database),
 
 
 
-
 @lesson_router.put("/update_lesson")
 def edit_lesson(ident: int, form: UpdateLessons, db: Session = Depends(database),
                 current_user: CreateUser = Depends(get_current_user)):
     return update_lesson(ident, form, db, current_user)
+
 
 
 @lesson_router.delete("/delete_lesson")

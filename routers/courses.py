@@ -1,12 +1,11 @@
-from typing import Optional, List
-
+from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session, joinedload
 from functions.courses import create_courses,update_courses,delete_courses
 from models.course import Course
 from routers.auth import get_current_user
 from schemas.users import CreateUser
-from schemas.courses import CreateCourses,UpdateCourses,CourseOut
+from schemas.courses import CreateCourses,UpdateCourses
 from db import database
 
 

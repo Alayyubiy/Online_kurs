@@ -14,10 +14,12 @@ def route_get_enrollments(db: Session = Depends(database),
                           current_user = Depends(get_current_user)):
     return get_all_enrollments(db, current_user)
 
+
 @enrollment_router.post("/enroll_user")
 def route_enroll_user(form: CreateEnrollments, db: Session = Depends(database),
                       current_user = Depends(get_current_user)):
     return enroll_user(form, db, current_user)
+
 
 @enrollment_router.put("/update_enrollment/{ident}")
 def route_update_enrollment(ident: int, form: CreateEnrollments, db: Session = Depends(database),

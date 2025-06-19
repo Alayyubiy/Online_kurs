@@ -21,14 +21,18 @@ def get_top_students(db: Session):
             User.name
         )
         .join(User, User.id == TestHistory.user_id)
-        .group_by(TestHistory.user_id)
+        .group_by(TestHistory.user_id, User.name)  # name ham group_by ga qo‘shiladi
         .order_by(desc("avg_score"))
         .limit(10)
         .all()
     )
 
     return [
-        {"user_id": row.user_id, "name": row.name, "avg_score": round(row.avg_score, 2)}
+        {
+            "user_id": row.user_id,
+            "name": row.name,
+            "avg_score": round(row.avg_score, 2) if row.avg_score is not None else 0.0
+        }
         for row in result
     ]
 

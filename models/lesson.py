@@ -15,4 +15,4 @@ class Lesson(Base):
     section = relationship("Section", back_populates="lessons", cascade="all, delete")
     progresses = relationship("Progress", back_populates="lesson", cascade="all, delete")
     quizzes = relationship("Quiz", back_populates="lesson", cascade="all, delete")
-    test_histories = relationship("TestHistory", back_populates="user")
+    test_histories = relationship("TestHistory", back_populates="lesson")

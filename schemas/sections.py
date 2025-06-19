@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class CreateSections(BaseModel):
     title:str
     course_id:int

@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 
+
 class CreateProgress(BaseModel):
     user_id:int
     lessons_id:int

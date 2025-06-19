@@ -7,7 +7,6 @@ class CreateCourses(BaseModel):
     description:str
 
 
-
 class UpdateCourses(BaseModel):
     name:str
     description:str

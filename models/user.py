@@ -14,3 +14,4 @@ class User(Base):
 
     enrollments = relationship("Enrollment", back_populates="user")
     progresses = relationship("Progress", back_populates="user")
+    test_histories = relationship("TestHistory", back_populates="user")

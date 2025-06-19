@@ -4,7 +4,6 @@ from db import Base
 
 class User(Base):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     username = Column(String(150), unique=True, index=True)

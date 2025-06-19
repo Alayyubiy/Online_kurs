@@ -2,9 +2,9 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from db import Base
 
+
 class Lesson(Base):
     __tablename__ = "lessons"
-
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     video_url = Column(String(500))

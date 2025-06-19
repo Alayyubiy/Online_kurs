@@ -4,9 +4,9 @@ from db import Base
 from datetime import datetime
 import pytz
 
+
 class Course(Base):
     __tablename__ = "courses"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     description = Column(String(500))

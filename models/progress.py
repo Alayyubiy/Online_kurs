@@ -4,9 +4,9 @@ from sqlalchemy.orm import relationship
 from db import Base
 from datetime import datetime
 
+
 class Progress(Base):
     __tablename__ = "progress"
-
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     lesson_id = Column(Integer, ForeignKey("lessons.id"))

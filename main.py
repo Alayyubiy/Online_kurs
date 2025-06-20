@@ -10,10 +10,12 @@ from routers.user import user_router
 from routers.section import section_router
 from routers.lesson import lesson_router
 from routers.progress import progress_router
+from routers.student import student_router
 from  routers.enrollments import enrollment_router
 from routers.quiz import quiz_router
 from routers.test_history import test_history_router
 from routers.statistica import statistics_router
+from routers.teacher import teacher_router
 from admin_panel.auth import AdminAuth
 from admin_panel.section import SectionAdmin
 from admin_panel.quiz import QuizAdmin
@@ -49,6 +51,8 @@ app.include_router(enrollment_router)
 app.include_router(quiz_router)
 app.include_router(test_history_router)
 app.include_router(statistics_router)
+app.include_router(teacher_router)
+app.include_router(student_router)
 app.include_router(user_router)
 app.include_router(login_router)
 

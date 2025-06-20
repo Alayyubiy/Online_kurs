@@ -8,13 +8,13 @@ from utils.save_file import save_file
 
 
 def create_lesson(form, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(403, detail="Sizga bu amalni bajarishga ruxsat yo'q")
-
     new_lesson = Lesson(
-        title=form.title.strip(),
+        title=form.title,
+        video_url=form.video_url,
+        homework_file_url=form.homework_file_url,
         order=form.order,
-        section_id=form.section_id
+        section_id=form.section_id,
+        created_by=current_user.id
     )
     db.add(new_lesson)
     db.commit()
@@ -24,57 +24,55 @@ def create_lesson(form, db, current_user):
 
 
 def update_lesson(ident, form, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(403, detail="Faqat admin yangilashi mumkin")
-    lesson = db.query(Lesson).filter(Lesson.id == ident).first()
+    lesson = db.query(Lesson).filter_by(id=ident, created_by=current_user.id).first()
     if not lesson:
-        raise HTTPException(404, detail="Lesson topilmadi")
-    for key, value in form.dict(exclude_unset=True).items():
-        setattr(lesson, key, value)
+        raise HTTPException(403, "Sizga bu darsni tahrirlashga ruxsat yo‘q")
+    lesson.title = form.title
+    lesson.video_url = form.video_url
+    lesson.homework_file_url = form.homework_file_url
+    lesson.order = form.order
+    lesson.section_id = form.section_id
     db.commit()
+    db.refresh(lesson)
     return {"message": "Lesson updated successfully"}
 
 
 
 def delete_lesson(ident, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(403, detail="Faqat admin o'chirishi mumkin")
-
-    lesson = db.query(Lesson).filter(Lesson.id == ident).first()
+    lesson = db.query(Lesson).filter_by(id=ident, created_by=current_user.id).first()
     if not lesson:
-        raise HTTPException(404, detail="Lesson mavjud emas")
-
+        raise HTTPException(403, "Sizga bu darsni o‘chirishga ruxsat yo‘q")
     db.delete(lesson)
     db.commit()
-    return {"message": "Lesson deleted successfully"}
+    return {"message": "Lesson o‘chirildi"}
 
 
-def upload_homework_file_url(ident,image,db,current_user):
-    if current_user.role == 'admin':
-        lesson = db.query(Lesson).filter(Lesson.id == ident).first()
-        if not lesson:
-            raise HTTPException(404, "The apartment you entered does not exist!!!")
 
-        lesson.image = save_file(image)
-        db.commit()
-        return {"message": "Image downloads"}
-    else:
-        return {"Message": "Sizda adminlik huquqi mavjud emas !!!"}
+def upload_homework_file_url(ident, file: UploadFile, db, current_user):
+    if current_user.role != 'teacher':
+        raise HTTPException(status_code=403, detail="Faqat teacher fayl yuklashi mumkin.")
 
+    lesson = db.query(Lesson).filter(Lesson.id == ident, Lesson.created_by == current_user.id).first()
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Sizga tegishli bunday lesson topilmadi.")
+
+    lesson.homework_file_url = save_file(file)
+    db.commit()
+    return {"message": "Homework file muvaffaqiyatli yuklandi", "file_url": lesson.homework_file_url}
 
 
 def upload_lesson_video(lesson_id: int, video: UploadFile, db, current_user):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Faqat adminlar video yuklashi mumkin.")
+    if current_user.role != "teacher":
+        raise HTTPException(status_code=403, detail="Faqat teacher video yuklashi mumkin.")
 
-    lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
+    lesson = db.query(Lesson).filter(Lesson.id == lesson_id, Lesson.created_by == current_user.id).first()
     if not lesson:
-        raise HTTPException(status_code=404, detail="Bunday dars topilmadi.")
+        raise HTTPException(status_code=404, detail="Sizga tegishli bunday lesson topilmadi.")
 
     upload_dir = "static/uploads"
     os.makedirs(upload_dir, exist_ok=True)
 
-    filename = f"{datetime.now(pytz.timezone("Asia/Tashkent")).timestamp()}_{video.filename}"
+    filename = f"{datetime.now(pytz.timezone('Asia/Tashkent')).timestamp()}_{video.filename}"
     filepath = os.path.join(upload_dir, filename)
 
     with open(filepath, "wb") as f:

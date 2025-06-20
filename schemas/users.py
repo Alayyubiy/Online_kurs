@@ -11,3 +11,10 @@ class UpdateUser(BaseModel):
     username: str
     password: str = Field(min_length=4, max_length=8)
     phone: str
+
+
+class CreateStudent(BaseModel):
+    name: str
+    username: str
+    password: str
+    phone: str

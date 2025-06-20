@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session, joinedload
 from db import database
-from functions.progress import create_progress, update_progress, get_all_progress
+from functions.progress import create_progress, update_progress, get_all_progress, delete_progress
 from models import  Progress, User
 from routers.auth import get_current_user
 from schemas.progress import CreateProgress
@@ -30,3 +30,8 @@ def route_update_progress(ident: int, form: CreateProgress, db: Session = Depend
 @progress_router.get("/get_all_progress")
 def route_get_all_progress(db: Session = Depends(database), current_user: CreateUser = Depends(get_current_user)):
     return get_all_progress(db, current_user)
+
+
+@progress_router.delete("/delete_progress/{ident}")
+def route_delete_progress(ident: int, db: Session = Depends(database), current_user: CreateUser = Depends(get_current_user)):
+    return delete_progress(ident, db, current_user)

@@ -17,7 +17,7 @@ class User(Base):
     test_histories = relationship("TestHistory", back_populates="user")
 
     def __str__(self):
-        return f"{self.name}" if self.name else "No course"
+        return f"{self.name}" if self.name else "No name"
 
     def __repr__(self):
-        return f"{self.name}" if self.name else "No course"
+        return f"{self.name}" if self.name else "No name"

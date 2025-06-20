@@ -18,6 +18,8 @@ from admin_panel.auth import AdminAuth
 from admin_panel.section import SectionAdmin
 from admin_panel.quiz import QuizAdmin
 from admin_panel.lesson import LessonAdmin
+from admin_panel.enrollment import EnrollmentAdmin
+from admin_panel.course import CourseAdmin
 
 
 app = FastAPI(docs_url='/', title="ONLINEKURS")
@@ -28,6 +30,8 @@ authentication_backend = AdminAuth(secret_key=SECRET_KEY)
 admin = Admin(app, engine, authentication_backend=authentication_backend)
 
 admin.add_model_view(UserAdmin)
+admin.add_model_view(EnrollmentAdmin)
+admin.add_model_view(CourseAdmin)
 admin.add_model_view(SectionAdmin)
 admin.add_model_view(LessonAdmin)
 admin.add_model_view(HistoryAdmin)

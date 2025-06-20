@@ -1,16 +1,34 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from db import Base
-from datetime import datetime
-import pytz
+from sqladmin import ModelView
+from models.course import Course
+from starlette.requests import Request
 
+class CourseAdmin(ModelView, model=Course):
+    column_list = [
+        "name", "description", "data_time"
+    ]
+    form_columns = [
+        "name", "description"
+    ]
+    name = "Course"
+    name_plural = "Course"
+    column_searchable_list = [Course.name]
+    page_size = 10
+    icon = "fa-regular fa-bell"
 
-class Course(Base):
-    __tablename__ = "courses"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False)
-    description = Column(String(500))
-    data_time = Column(DateTime, default=lambda: datetime.now(pytz.timezone("Asia/Tashkent")))
+    column_sortable_list = [
+        "Course.id"
 
-    sections = relationship("Section", back_populates="course")
-    enrollments = relationship("Enrollment", back_populates="course")
+    ]
+
+    column_labels = {
+        "name": "Name",
+        "description": "Description",
+        "data_time": "Data_time",
+
+    }
+
+    def is_visible(self, request: Request) -> bool:
+        return True
+
+    def is_accessible(self, request: Request) -> bool:
+        return True

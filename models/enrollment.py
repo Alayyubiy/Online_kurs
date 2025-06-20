@@ -14,3 +14,10 @@ class Enrollment(Base):
 
     user = relationship("User", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")
+
+
+    def __str__(self):
+        return f"{self.user_id}" if self.user_id  else "No user"
+
+    def __repr__(self):
+        return f"{self.user_id}" if self.user_id  else "No user"

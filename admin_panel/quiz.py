@@ -1,4 +1,6 @@
 from sqladmin import ModelView
+
+from models import Lesson
 from models.quiz import Quiz
 from starlette.requests import Request
 
@@ -11,6 +13,8 @@ class QuizAdmin(ModelView, model=Quiz):
     ]
     name = "Quiz"
     name_plural = "Quiz"
+    column_searchable_list = [Lesson.title]
+    page_size = 10
     icon = "fa-solid fa-circle-question"
 
     column_sortable_list = [

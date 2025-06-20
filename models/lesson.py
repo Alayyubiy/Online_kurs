@@ -18,7 +18,7 @@ class Lesson(Base):
     test_histories = relationship("TestHistory", back_populates="lesson")
 
     def __str__(self):
-        return f"{self.title}" if self.title  else "No course"
+        return f"{self.title}" if self.title  else "No lesson"
 
     def __repr__(self):
-        return f"{self.title}" if self.title  else "No course"
+        return f"{self.title}" if self.title  else "No lesson"

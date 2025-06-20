@@ -12,11 +12,16 @@ class LessonAdmin(ModelView, model=Lesson):
     form_widget_args = {
         "homework_file_url": {
             "type": "file"
+        },
+        "video_url": {
+            "type": "file"
         }
     }
 
     name = "Lesson"
     name_plural = "Lesson"
+    column_searchable_list = [Lesson.title]
+    page_size = 10
     icon = "fa-solid fa-person-chalkboard"
 
     column_sortable_list = [

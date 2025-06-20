@@ -1,4 +1,6 @@
 from sqladmin import ModelView
+
+from models import User
 from models.test_history import TestHistory
 from starlette.requests import Request
 
@@ -7,10 +9,12 @@ class HistoryAdmin(ModelView, model=TestHistory):
         "user", "lesson", "score", "total_questions", "correct_answers", "taken_at"
     ]
     form_columns = [
-        "user", "lesson", "score", "total_questions", "correct_answers", "taken_at"
+        "user", "lesson", "score", "total_questions", "correct_answers"
     ]
     name = "TestHistory"
     name_plural = "TestHistory"
+    column_searchable_list = [User.name]
+    page_size = 10
     icon = "fa-solid fa-clock-rotate-left"
 
     column_sortable_list = [

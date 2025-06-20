@@ -11,6 +11,8 @@ class SectionAdmin(ModelView, model=Section):
     ]
     name = "Section"
     name_plural = "Section"
+    column_searchable_list = [Section.title]
+    page_size = 10
     icon = "fa-solid fa-clock-rotate-left"
 
     column_sortable_list = [

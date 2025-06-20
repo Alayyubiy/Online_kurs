@@ -6,11 +6,19 @@ from datetime import datetime
 
 
 def enroll_user(form, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(status_code=403, detail="Faqat adminlar foydalanuvchilarni kursga yozishi mumkin.")
+    if current_user.role not in ['admin', 'teacher']:
+        raise HTTPException(status_code=403, detail="Sizga ruxsat yo‘q.")
+
+    # Agar teacher bo‘lsa, faqat o‘z kurslariga yozishi mumkin
+    if current_user.role == 'teacher':
+        from models.course import Course
+        course = db.query(Course).filter(Course.id == form.course_id, Course.created_by == current_user.id).first()
+        if not course:
+            raise HTTPException(status_code=403, detail="Bu kurs sizga tegishli emas.")
+
     existing = db.query(Enrollment).filter_by(user_id=form.user_id, course_id=form.course_id).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Bu foydalanuvchi allaqachon bu kursga yozilgan.")
+        raise HTTPException(status_code=400, detail="Bu foydalanuvchi allaqachon kursga yozilgan.")
 
     new_enrollment = Enrollment(
         user_id=form.user_id,
@@ -27,21 +35,35 @@ def enroll_user(form, db, current_user):
 
 
 
+
 def get_all_enrollments(db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(status_code=403, detail="Faqat adminlar ro'yxatni ko'rishi mumkin.")
+    if current_user.role == 'admin':
+        return db.query(Enrollment).all()
 
-    return db.query(Enrollment).all()
+    elif current_user.role == 'teacher':
+        return db.query(Enrollment).join(Enrollment.course).filter(
+            Enrollment.course.has(created_by=current_user.id)
+        ).all()
 
+    else:
+        raise HTTPException(status_code=403, detail="Sizga ruxsat yo‘q.")
 
 
 def update_enrollment(ident, form, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(status_code=403, detail="Faqat admin foydalanuvchilarni yangilay oladi.")
-
     enrollment = db.query(Enrollment).filter(Enrollment.id == ident).first()
     if not enrollment:
-        raise HTTPException(status_code=404, detail="Bunday enrollment mavjud emas.")
+        raise HTTPException(status_code=404, detail="Bunday enrollment topilmadi.")
+
+    # teacher o‘z kurslariga tegishli enrollmentni yangilay oladi
+    if current_user.role == 'teacher':
+        from models.course import Course
+        course = db.query(Course).filter(Course.id == enrollment.course_id,
+                                         Course.created_by == current_user.id).first()
+        if not course:
+            raise HTTPException(status_code=403, detail="Siz bu enrollmentni tahrirlashga haqli emassiz.")
+
+    elif current_user.role != 'admin':
+        raise HTTPException(status_code=403, detail="Sizga ruxsat yo‘q.")
 
     enrollment.user_id = form.user_id
     enrollment.course_id = form.course_id
@@ -54,14 +76,19 @@ def update_enrollment(ident, form, db, current_user):
     }
 
 
-
 def delete_enrollment(ident, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(status_code=403, detail="Faqat adminlar o‘chira oladi.")
-
     enrollment = db.query(Enrollment).filter(Enrollment.id == ident).first()
     if not enrollment:
         raise HTTPException(status_code=404, detail="Bunday enrollment topilmadi.")
+
+    if current_user.role == 'teacher':
+        from models.course import Course
+        course = db.query(Course).filter(Course.id == enrollment.course_id, Course.created_by == current_user.id).first()
+        if not course:
+            raise HTTPException(status_code=403, detail="Siz bu enrollmentni o‘chira olmaysiz.")
+
+    elif current_user.role != 'admin':
+        raise HTTPException(status_code=403, detail="Sizga ruxsat yo‘q.")
 
     db.delete(enrollment)
     db.commit()

@@ -5,7 +5,7 @@ from models.quiz import Quiz
 from routers.auth import get_current_user
 from models.user import User
 from schemas.quiz import CreateQuiz, QuizAnswer
-from functions.quiz import create_quiz, submit_quiz
+from functions.quiz import create_quiz, submit_quiz, update_quiz, delete_quiz
 
 quiz_router = APIRouter(tags=["Quiz"])
 
@@ -32,3 +32,16 @@ def route_submit_quiz(lesson_id: int, form: QuizAnswer, db: Session = Depends(da
     return submit_quiz(lesson_id, current_user.id, form.answers, db)
 
 
+@quiz_router.put("/update_quiz/{quiz_id}")
+def route_update_quiz(quiz_id: int,
+                      form: CreateQuiz,
+                      db: Session = Depends(database),
+                      current_user: User = Depends(get_current_user)):
+    return update_quiz(quiz_id, form, db, current_user)
+
+
+@quiz_router.delete("/delete_quiz/{quiz_id}")
+def route_delete_quiz(quiz_id: int,
+                      db: Session = Depends(database),
+                      current_user: User = Depends(get_current_user)):
+    return delete_quiz(quiz_id, db, current_user)

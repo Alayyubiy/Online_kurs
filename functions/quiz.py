@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-
 from models import Lesson
 from models.quiz import Quiz
 from models.progress import Progress
@@ -7,20 +6,63 @@ from datetime import datetime
 import pytz
 
 def create_quiz(form, db, current_user):
-    if current_user.role != 'admin':
-        raise HTTPException(status_code=403, detail="Faqat adminlar test qo‘shishi mumkin.")
+    # Dars mavjudligini tekshirish
     lesson = db.query(Lesson).filter(Lesson.id == form.lesson_id).first()
     if not lesson:
-        raise HTTPException(status_code=404, detail="Bunday dars mavjud emas!")
-    new_quiz = Quiz(
+        raise HTTPException(status_code=404, detail="Bunday dars topilmadi!")
+
+    # Ruxsatni tekshirish: admin hamma narsani, teacher faqat o‘zinikini
+    if current_user.role == "teacher" and lesson.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Faqat o‘zingizga tegishli darsga quiz qo‘shishingiz mumkin!")
+
+    # Quiz qo‘shish
+    quiz = Quiz(
         lesson_id=form.lesson_id,
-        question=form.question.strip(),
-        correct_answer=form.correct_answer.strip()
+        question=form.question,
+        correct_answer=form.correct_answer
     )
-    db.add(new_quiz)
+    db.add(quiz)
     db.commit()
-    db.refresh(new_quiz)
-    return {"message": "Savol qo‘shildi", "id": new_quiz.id}
+    db.refresh(quiz)
+    return {"message": "Quiz muvaffaqiyatli qo‘shildi", "quiz_id": quiz.id}
+
+def update_quiz(quiz_id, form, db, current_user):
+    quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz topilmadi!")
+
+    # Lesson bilan bog'liq tekshirish
+    lesson = db.query(Lesson).filter(Lesson.id == quiz.lesson_id).first()
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Bog‘langan dars topilmadi!")
+
+    # Ruxsat nazorati
+    if current_user.role == "teacher" and lesson.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Faqat o‘z quizlaringizni o‘zgartirishingiz mumkin!")
+
+    quiz.question = form.question
+    quiz.correct_answer = form.correct_answer
+    db.commit()
+    db.refresh(quiz)
+
+    return {"message": "Quiz muvaffaqiyatli yangilandi", "quiz_id": quiz.id}
+
+
+def delete_quiz(quiz_id, db, current_user):
+    quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz topilmadi!")
+
+    lesson = db.query(Lesson).filter(Lesson.id == quiz.lesson_id).first()
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Bog‘langan dars topilmadi!")
+
+    if current_user.role == "teacher" and lesson.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Faqat o‘z quizlaringizni o‘chira olasiz!")
+
+    db.delete(quiz)
+    db.commit()
+    return {"message": "Quiz o‘chirildi"}
 
 
 def submit_quiz(lesson_id, user_id, answers: dict, db):

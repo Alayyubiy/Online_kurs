@@ -15,6 +15,7 @@ class User(Base):
     enrollments = relationship("Enrollment", back_populates="user")
     progresses = relationship("Progress", back_populates="user")
     test_histories = relationship("TestHistory", back_populates="user")
+    payments = relationship("Payment", back_populates="user")
 
     def __str__(self):
         return f"{self.name}" if self.name else "No name"

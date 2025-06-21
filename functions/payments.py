@@ -1,5 +1,4 @@
 from typing import Optional
-
 import pytz
 from models.payments import Payment
 from datetime import datetime

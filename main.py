@@ -23,6 +23,7 @@ from admin_panel.quiz import QuizAdmin
 from admin_panel.lesson import LessonAdmin
 from admin_panel.enrollment import EnrollmentAdmin
 from admin_panel.course import CourseAdmin
+from admin_panel.payments import PaymentAdmin
 from routers.payments import payment_router
 
 
@@ -41,6 +42,7 @@ admin.add_model_view(SectionAdmin)
 admin.add_model_view(LessonAdmin)
 admin.add_model_view(HistoryAdmin)
 admin.add_model_view(QuizAdmin)
+admin.add_model_view(PaymentAdmin)
 
 
 

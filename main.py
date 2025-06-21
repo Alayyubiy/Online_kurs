@@ -25,6 +25,9 @@ from admin_panel.enrollment import EnrollmentAdmin
 from admin_panel.course import CourseAdmin
 from admin_panel.payments import PaymentAdmin
 from routers.payments import payment_router
+from routers.live_sessions import live_router
+from admin_panel.live_sessions import LiveSessionAdmin
+from routers import signaling
 
 
 
@@ -36,6 +39,7 @@ authentication_backend = AdminAuth(secret_key=SECRET_KEY)
 admin = Admin(app, engine, authentication_backend=authentication_backend)
 
 admin.add_model_view(UserAdmin)
+admin.add_model_view(LiveSessionAdmin)
 admin.add_model_view(EnrollmentAdmin)
 admin.add_model_view(CourseAdmin)
 admin.add_model_view(SectionAdmin)
@@ -60,6 +64,8 @@ app.include_router(teacher_router)
 app.include_router(student_router)
 app.include_router(dashboard_router)
 app.include_router(payment_router)
+app.include_router(live_router)
+app.include_router(signaling.router)
 app.include_router(user_router)
 app.include_router(login_router)
 

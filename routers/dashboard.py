@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from db import database
 from routers.auth import get_current_user
 from models import User
-from functions.dashboard import get_summary_stats
+from functions.dashboard import get_summary_stats, get_admin_dashboard
 
 dashboard_router = APIRouter(tags=["Dashboard"])
 # Bu hamma malumotlarni admin kurishi uchun
@@ -46,3 +46,8 @@ def dashboard_lowest_students(
 
     return get_lowest_students(db)
 
+@dashboard_router.get("/admin/stats")
+def route_admin_dashboard(db: Session = Depends(database), current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Faqat adminlar uchun.")
+    return get_admin_dashboard(db)

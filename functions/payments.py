@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytz
 from models.payments import Payment
 from datetime import datetime
@@ -93,31 +95,36 @@ def add_manual_payment(user_id: int, course_id: int, db, current_user):
         "payment_id": new_payment.id
     }
 
-def update_payment_status(payment_id: int, new_status: str, db, current_user):
+def update_payment_status(payment_id: int, new_status: Optional[str], new_amount: Optional[float], db, current_user):
     if current_user.role != 'admin':
-        raise HTTPException(status_code=403, detail="Faqat admin statusni yangilashi mumkin.")
+        raise HTTPException(status_code=403, detail="Faqat admin o‘zgartira oladi.")
 
     payment = db.query(Payment).filter(Payment.id == payment_id).first()
     if not payment:
         raise HTTPException(status_code=404, detail="To‘lov topilmadi.")
 
-    if new_status not in ["pending", "paid", "failed"]:
-        raise HTTPException(status_code=400, detail="Status noto‘g‘ri kiritilgan.")
+    if new_status:
+        if new_status not in ["pending", "paid", "unpaid"]:
+            raise HTTPException(status_code=400, detail="Noto‘g‘ri status.")
+        payment.status = new_status
 
-    payment.status = new_status
+        if new_status == "paid" and not payment.paid_at:
+            payment.paid_at = datetime.now(pytz.timezone("Asia/Tashkent"))
 
-    if new_status == "paid" and not payment.paid_at:
-        from datetime import datetime
-        import pytz
-        payment.paid_at = datetime.now(pytz.timezone("Asia/Tashkent"))
+    if new_amount is not None:
+        if new_amount < 0:
+            raise HTTPException(status_code=400, detail="To‘lov miqdori manfiy bo‘lishi mumkin emas.")
+        payment.amount = new_amount
 
     db.commit()
     db.refresh(payment)
 
     return {
-        "message": f"To‘lov statusi '{new_status}' ga yangilandi.",
+        "message": "To‘lov muvaffaqiyatli yangilandi.",
         "payment_id": payment.id,
-        "status": payment.status
+        "status": payment.status,
+        "amount": payment.amount,
+        "paid_at": payment.paid_at.strftime('%Y-%m-%d %H:%M') if payment.paid_at else None
     }
 
 

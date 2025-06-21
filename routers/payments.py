@@ -37,7 +37,7 @@ from pydantic import BaseModel
 
 class UpdatePaymentStatus(BaseModel):
     payment_id: int
-    new_status: str  # "paid", "pending", "failed"
+    new_status: str  # "paid", "pending", "unpaid"
 
 @payment_router.put("/update-status")
 def route_update_payment_status(
@@ -45,4 +45,4 @@ def route_update_payment_status(
     db: Session = Depends(database),
     current_user: User = Depends(get_current_user)
 ):
-    return update_payment_status(data.payment_id, data.new_status, db, current_user)
+    return update_payment_status(data.payment_id, data.new_status, data.new_amount, db, current_user)

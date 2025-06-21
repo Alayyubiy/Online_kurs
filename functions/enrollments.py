@@ -2,19 +2,16 @@ import pytz
 from fastapi import HTTPException
 from models.enrollment import Enrollment
 from datetime import datetime
-
-
+from models.payments import Payment
 
 def enroll_user(form, db, current_user):
-    if current_user.role not in ['admin', 'teacher']:
-        raise HTTPException(status_code=403, detail="Sizga ruxsat yo‘q.")
+    if current_user.role != 'admin' and current_user.role != 'teacher':
+        raise HTTPException(status_code=403, detail="Sizda kursga yozish huquqi yo‘q.")
 
-    # Agar teacher bo‘lsa, faqat o‘z kurslariga yozishi mumkin
-    if current_user.role == 'teacher':
-        from models.course import Course
-        course = db.query(Course).filter(Course.id == form.course_id, Course.created_by == current_user.id).first()
-        if not course:
-            raise HTTPException(status_code=403, detail="Bu kurs sizga tegishli emas.")
+    # To‘lov qilinganini tekshirish
+    payment = db.query(Payment).filter_by(user_id=form.user_id, course_id=form.course_id, status="paid").first()
+    if not payment:
+        raise HTTPException(status_code=403, detail="Foydalanuvchi bu kurs uchun to‘lov qilmagan.")
 
     existing = db.query(Enrollment).filter_by(user_id=form.user_id, course_id=form.course_id).first()
     if existing:
@@ -32,6 +29,7 @@ def enroll_user(form, db, current_user):
         "message": "Foydalanuvchi kursga yozildi.",
         "data": new_enrollment
     }
+
 
 
 

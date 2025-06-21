@@ -23,6 +23,8 @@ from admin_panel.quiz import QuizAdmin
 from admin_panel.lesson import LessonAdmin
 from admin_panel.enrollment import EnrollmentAdmin
 from admin_panel.course import CourseAdmin
+from routers.payments import payment_router
+
 
 
 app = FastAPI(docs_url='/', title="ONLINEKURS")
@@ -55,6 +57,7 @@ app.include_router(statistics_router)
 app.include_router(teacher_router)
 app.include_router(student_router)
 app.include_router(dashboard_router)
+app.include_router(payment_router)
 app.include_router(user_router)
 app.include_router(login_router)
 

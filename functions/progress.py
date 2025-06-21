@@ -1,6 +1,5 @@
 import pytz
 from fastapi import HTTPException
-
 from models import Lesson
 from models.progress import Progress
 from datetime import datetime

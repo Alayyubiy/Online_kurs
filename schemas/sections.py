@@ -7,6 +7,7 @@ class CreateSections(BaseModel):
     order:int
 
 
+
 class UpdateSections(BaseModel):
     title: str
     course_id: int

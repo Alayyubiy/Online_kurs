@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from sqladmin import Admin
+from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from admin_panel.test_history import HistoryAdmin
 from admin_panel.user import UserAdmin
@@ -32,6 +33,22 @@ from routers import signaling
 
 
 app = FastAPI(docs_url='/', title="ONLINEKURS")
+
+origins = [
+    "http://localhost:5173",     # Vite (React) uchun
+    "http://127.0.0.1:5173",     # Ba’zan localhost o‘rniga shu bo‘ladi
+    "https://bf2a6cf2df8c.ngrok-free.app",
+    "https://12ce-185-213-229-97.ngrok-free.app"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 

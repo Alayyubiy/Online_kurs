@@ -14,10 +14,6 @@ class Lesson(Base):
     created_by = Column(Integer, ForeignKey("users.id"))
 
     section = relationship("Section", back_populates="lessons", cascade="all, delete")
-    progresses = relationship("Progress", back_populates="lesson", cascade="all, delete")
-    quizzes = relationship("Quiz", back_populates="lesson", cascade="all, delete")
-    test_histories = relationship("TestHistory", back_populates="lesson")
-    teacher = relationship("User", backref="lessons_created")
 
     def __str__(self):
         return f"{self.title}" if self.title  else "No lesson"

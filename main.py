@@ -9,7 +9,6 @@ from routers.courses import courses_router
 from routers.user import user_router
 from routers.section import section_router
 from routers.lesson import lesson_router
-from routers.progress import progress_router
 from admin_panel.auth import AdminAuth
 from admin_panel.section import SectionAdmin
 from admin_panel.lesson import LessonAdmin
@@ -56,7 +55,6 @@ Base.metadata.create_all(bind=engine)
 app.include_router(courses_router)
 app.include_router(section_router)
 app.include_router(lesson_router)
-app.include_router(progress_router)
 app.include_router(payment_router)
 app.include_router(user_router)
 app.include_router(login_router)

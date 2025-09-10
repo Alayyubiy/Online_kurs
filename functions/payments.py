@@ -3,7 +3,7 @@ import pytz
 from models.payments import Payment
 from datetime import datetime
 from sqlalchemy.orm import Session
-from models import  Enrollment, User, Course
+from models import   User, Course
 from fastapi import HTTPException
 
 

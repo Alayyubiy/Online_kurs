@@ -12,11 +12,7 @@ class User(Base):
     phone = Column(String(20))
     role = Column(String(50))
 
-    enrollments = relationship("Enrollment", back_populates="user")
-    progresses = relationship("Progress", back_populates="user")
-    test_histories = relationship("TestHistory", back_populates="user")
     payments = relationship("Payment", back_populates="user")
-    live_sessions = relationship("LiveSession", back_populates="user")
 
     def __str__(self):
         return f"{self.name}" if self.name else "No name"

@@ -10,10 +10,17 @@ class Course(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     description = Column(String(500))
-    data_time = Column(DateTime, default=lambda: datetime.now(pytz.timezone("Asia/Tashkent")))
+    category = Column(String(100))
+    duration = Column(String(30))
+    level = Column(String(30))
+    price = Column(Integer)
+    teacher = Column(String(100))
+
 
     sections = relationship("Section", back_populates="course")
     payments = relationship("Payment", back_populates="course")
+    images = relationship("CourseImage", back_populates="course", cascade="all, delete")
+
 
     def __str__(self):
         return f"{self.name}" if self.name  else "No course"

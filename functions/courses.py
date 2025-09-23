@@ -9,13 +9,18 @@ def create_courses(form, db, current_user):
     new_course = Course(
         name=form.name.strip().capitalize(),
         description=form.description.strip(),
+        category=form.category.strip(),
+        duration=form.duration.strip(),
+        level=form.level.strip(),
+        price=form.price,
+        teacher=form.teacher.strip()
     )
 
     db.add(new_course)
     db.commit()
     db.refresh(new_course)
 
-    return {"message": "Kurs muvaffaqiyatli qo‘shildi", "course_id": new_course.id}
+    return  new_course
 
 
 def update_courses(ident, form, db, current_user):

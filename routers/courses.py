@@ -14,12 +14,19 @@ courses_router = APIRouter(tags=["Course"])
 
 
 @courses_router.get("/get_courses")
-def get_courses(name: Optional[str] = None, db: Session = Depends(database)):
-    query = db.query(Course).options(joinedload(Course.sections))
+def get_courses(
+    name: Optional[str] = None,
+    db: Session = Depends(database)
+):
+    query = db.query(Course).options(
+        joinedload(Course.sections),
+        joinedload(Course.images)
+    )
     if name:
         query = query.filter(Course.name == name)
 
     return query.all()
+
 
 
 
@@ -32,6 +39,8 @@ def create_course(
     level: str = Form(...),
     price: int = Form(...),
     teacher: str = Form(...),
+    lessons: int = Form(...),
+    views: int = Form(...),
     images: List[UploadFile] = File(None),
     db: Session = Depends(database),
     current_user: CreateUser = Depends(get_current_user)
@@ -44,7 +53,10 @@ def create_course(
         duration=duration,
         level=level,
         price=price,
-        teacher=teacher
+        teacher=teacher,
+        lessons=lessons,
+        views=views
+
     )
     course = create_courses(form, db, current_user)
 

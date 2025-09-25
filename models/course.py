@@ -15,6 +15,8 @@ class Course(Base):
     level = Column(String(30))
     price = Column(Integer)
     teacher = Column(String(100))
+    lessons = Column(Integer)
+    views = Column(Integer)
 
 
     sections = relationship("Section", back_populates="course")

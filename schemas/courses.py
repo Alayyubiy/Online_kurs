@@ -9,6 +9,8 @@ class CreateCourses(BaseModel):
     level:str
     price:int
     teacher:str
+    lessons:int
+    views:int
 
 
 class UpdateCourses(BaseModel):
@@ -19,6 +21,8 @@ class UpdateCourses(BaseModel):
     level:str
     price:int
     teacher:str
+    lessons: int
+    views: int
 
 
 

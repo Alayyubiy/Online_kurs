@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, Form, UploadFile, File
 from sqlalchemy.orm import Session, joinedload
 from functions.courses import update_courses,delete_courses,create_courses
 from models.course import Course
+from models.section import Section
+from models.lesson import Lesson
 from models.course_image import CourseImage
 from routers.auth import get_current_user
 from schemas.users import CreateUser
@@ -19,7 +21,7 @@ def get_courses(
     db: Session = Depends(database)
 ):
     query = db.query(Course).options(
-        joinedload(Course.sections),
+        joinedload(Course.sections).joinedload(Section.lessons),
         joinedload(Course.images)
     )
     if name:

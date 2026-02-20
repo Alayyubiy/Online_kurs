@@ -14,15 +14,10 @@ def create_courses(form, db, current_user):
         level=form.level.strip(),
         price=form.price,
         teacher=form.teacher.strip(),
-<<<<<<< HEAD
         lessons=form.lessons,
         views=form.views,
         created_by = current_user.id
 
-=======
-        lessons=int(form.lessons),
-        views=int(form.views)
->>>>>>> 7e65787d648b7413b23b03de0bf07d18309c905f
     )
 
     db.add(new_course)

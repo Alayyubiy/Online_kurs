@@ -6,7 +6,7 @@ from routers.auth import get_password_hash
 def add_user(form, db):
     a = db.query(User).filter(User.username == form.username).first()
     if a:
-        raise HTTPException(404,"Bunday user band")
+        raise HTTPException(status_code=400, detail="Bu username band")
     new_user = User(
         name=form.name.strip().capitalize(),
         username=form.username,

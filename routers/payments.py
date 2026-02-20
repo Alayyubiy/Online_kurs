@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -37,7 +39,9 @@ from pydantic import BaseModel
 
 class UpdatePaymentStatus(BaseModel):
     payment_id: int
-    new_status: str  # "paid", "pending", "unpaid"
+    new_status: str
+    new_amount: Optional[float] = None
+    # "paid", "pending", "unpaid"
 
 @payment_router.put("/update-status")
 def route_update_payment_status(

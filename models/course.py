@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from db import Base
 from datetime import datetime
@@ -17,6 +17,9 @@ class Course(Base):
     teacher = Column(String(100))
     lessons = Column(Integer)
     views = Column(Integer)
+
+
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
 
 
     sections = relationship("Section", back_populates="course")

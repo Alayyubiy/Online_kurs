@@ -40,16 +40,12 @@ def get_unpaid_enrollments(course_id: int, db: Session):
         .filter(Payment.course_id == course_id, Payment.status == "paid")
         .subquery()
     )
-
+    # Enrollment o'rniga barcha userlarni Payment jadvalidan oling
     results = (
-        db.query(
-            User.name.label("name"),
-            User.phone.label("phone"),
-            Course.name.label("course_name")
-        )
-        .join(Enrollment, Enrollment.user_id == User.id)
-        .join(Course, Course.id == Enrollment.course_id)
-        .filter(Enrollment.course_id == course_id)
+        db.query(User.name, User.phone, Course.name.label("course_name"))
+        .join(Payment, Payment.user_id == User.id)
+        .join(Course, Course.id == Payment.course_id)
+        .filter(Payment.course_id == course_id)
         .filter(~User.id.in_(subquery))
         .all()
     )

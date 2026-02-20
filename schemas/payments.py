@@ -11,4 +11,4 @@ class CreatePayment(BaseModel):
 class UpdatePaymentStatus(BaseModel):
     payment_id: int
     new_status: Optional[str] = Field(None, description="Yangi holat: 'paid', 'pending', 'failed'")
-    new_amount: Optional[float] = Field(None, description="Yangi to'lov miqdori (ixtiyoriy)")
+    new_amount: Optional[float] = None

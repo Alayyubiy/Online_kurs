@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from models import Section, User
+from models.course import Course
 from schemas.sections import CreateSections, UpdateSections
 from db import database
 from functions.section import create_section, update_section, delete_section
@@ -10,20 +11,34 @@ section_router = APIRouter(tags=["Sections"])
 
 
 @section_router.get("/get_sections")
-def get_sections(
-    db: Session = Depends(database),
-    current_user: User = Depends(get_current_user)
-):
+def get_sections(db: Session = Depends(database), current_user: User = Depends(get_current_user)):
     if current_user.role == "admin":
         return db.query(Section).options(joinedload(Section.lessons)).all()
     elif current_user.role == "teacher":
-        # Faqat o‘ziga tegishli course sectionlarini qaytaradi
         return db.query(Section).join(Section.course).filter(
             Section.course.has(created_by=current_user.id)
         ).options(joinedload(Section.lessons)).all()
     else:
-        raise HTTPException(status_code=403, detail="Sizda ruxsat yo‘q.")
+        raise HTTPException(status_code=403, detail="Sizda ruxsat yo'q.")
 
+
+# ✅ FIX: Frontend /get_sections_by_course/{courseId} chaqiradi — bu endpoint qo'shildi
+@section_router.get("/get_sections_by_course/{course_id}")
+def get_sections_by_course(
+    course_id: int,
+    db: Session = Depends(database),
+    current_user: User = Depends(get_current_user)
+):
+    # Kurs mavjudligini tekshirish
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Kurs topilmadi.")
+
+    sections = db.query(Section).filter(Section.course_id == course_id)\
+        .options(joinedload(Section.lessons))\
+        .order_by(Section.order)\
+        .all()
+    return sections
 
 
 @section_router.post("/create_section")

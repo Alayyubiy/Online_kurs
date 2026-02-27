@@ -11,7 +11,7 @@ from routers.auth import SECRET_KEY, ALGORITHM
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=30)):
+def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=60)):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
@@ -19,23 +19,31 @@ def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes
 
 
 class AdminAuth(AuthenticationBackend):
-    def init(self, secret_key: str):
-        super().init(secret_key=secret_key)
 
     async def login(self, request: Request) -> bool:
         form = await request.form()
-        username, password = form["username"], form["password"]
+        username = form.get("username", "")
+        password = form.get("password", "")
+
+        # ✅ Bo'sh input tekshiruvi
+        if not username or not password:
+            return False
 
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.username == username).first()
 
-            if not user:
+            # ✅ Timing attack himoya: user topilmasa ham verify chaqiriladi
+            if user:
+                is_valid = pwd_context.verify(password, user.password)
+            else:
+                pwd_context.dummy_verify()
+                is_valid = False
+
+            if not is_valid:
                 return False
 
-            if not pwd_context.verify(password, user.password):
-                return False
-
+            # ✅ Faqat admin role ga ruxsat
             if user.role != "admin":
                 return False
 
@@ -53,7 +61,6 @@ class AdminAuth(AuthenticationBackend):
         token = request.session.get("token")
         if not token:
             return False
-
         try:
             jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             return True

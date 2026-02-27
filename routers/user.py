@@ -15,7 +15,7 @@ user_router = APIRouter(tags=["User"])
 @user_router.get('/get_my_user')
 def get_my_user(
     db: Session = Depends(database),
-    current_user: CreateUser = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     user = db.query(User).filter(User.id == current_user.id).first()
     if not user:

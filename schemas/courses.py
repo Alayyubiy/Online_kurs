@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -23,6 +25,7 @@ class UpdateCourses(BaseModel):
     teacher:str
     lessons: int
     views: int
+    image_url: Optional[str] = None
 
 
 

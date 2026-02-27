@@ -11,7 +11,7 @@ class Section(Base):
     course_id = Column(Integer, ForeignKey("courses.id"))
 
     course = relationship("Course", back_populates="sections", cascade="all, delete")
-    lessons = relationship("Lesson", back_populates="section", cascade="all, delete")
+    lessons = relationship("Lesson", cascade="all, delete-orphan", back_populates="section")
 
 
     def __str__(self):

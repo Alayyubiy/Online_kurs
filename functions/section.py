@@ -1,4 +1,6 @@
 from fastapi import HTTPException
+
+from models import Lesson
 from models.section import Section
 from models.course import Course
 from models.user import User
@@ -50,12 +52,18 @@ def delete_section(ident, db, current_user: User):
         raise HTTPException(status_code=404, detail="Section topilmadi.")
 
     course = db.query(Course).filter(Course.id == section.course_id).first()
-    if current_user.role == 'teacher' and course.created_by != current_user.id:
-        raise HTTPException(status_code=403, detail="Faqat o‘zingiz yaratgan kurs bo‘limini o‘chira olasiz.")
 
-    if current_user.role not in ['admin', 'teacher']:
-        raise HTTPException(status_code=403, detail="Sizda ruxsat yo‘q.")
+    if current_user.role == 'admin':
+        pass
+    elif current_user.role == 'teacher':
+        if course.created_by != current_user.id:
+            raise HTTPException(status_code=403, detail="Faqat o'zingiz yaratgan kurs bo'limini o'chira olasiz.")
+    else:
+        raise HTTPException(status_code=403, detail="Sizda ruxsat yo'q.")
 
-    db.delete(section)
+    # ORM object emas, query orqali o'chir — SQLAlchemy identity map ni chetlab o'tadi
+    db.query(Lesson).filter(Lesson.section_id == ident).delete(synchronize_session=False)
+    db.query(Section).filter(Section.id == ident).delete(synchronize_session=False)
     db.commit()
-    return {"message": "Section o‘chirildi"}
+
+    return {"message": "Section o'chirildi"}

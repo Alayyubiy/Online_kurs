@@ -1,13 +1,13 @@
-from sqladmin import ModelView
 from models.lesson import Lesson
-from starlette.requests import Request
+from admin_panel._secure_base import SecureAdminView
 
-class LessonAdmin(ModelView, model=Lesson):
+
+class LessonAdmin(SecureAdminView, model=Lesson):
     column_list = [
         "section", "title", "video_url", "homework_file_url", "order"
     ]
     form_columns = [
-         "section","title", "video_url", "homework_file_url", "order"
+        "section", "title", "video_url", "homework_file_url", "order"
     ]
     form_widget_args = {
         "homework_file_url": {
@@ -26,7 +26,6 @@ class LessonAdmin(ModelView, model=Lesson):
 
     column_sortable_list = [
         "lesson.id"
-
     ]
 
     column_labels = {
@@ -35,11 +34,4 @@ class LessonAdmin(ModelView, model=Lesson):
         "video_url": "Video_url",
         "homework_file_url": "Homework_file_url",
         "order": "Order",
-
     }
-
-    def is_visible(self, request: Request) -> bool:
-        return True
-
-    def is_accessible(self, request: Request) -> bool:
-        return True

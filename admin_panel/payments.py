@@ -1,24 +1,17 @@
 from datetime import datetime
 
 import pytz
-from sqladmin import ModelView
 from models.payments import Payment
-from starlette.requests import Request
-
-class PaymentAdmin(ModelView, model=Payment):
+from admin_panel._secure_base import SecureAdminView
 
 
-
+class PaymentAdmin(SecureAdminView, model=Payment):
     column_list = [
-        "user", "course","amount","status","paid_at"
+        "user", "course", "amount", "status", "paid_at"
     ]
-
-
     form_columns = [
         "user", "course", "amount", "status"
     ]
-
-
 
     name = "Payment"
     column_searchable_list = ["user.name", "course.name"]
@@ -30,17 +23,14 @@ class PaymentAdmin(ModelView, model=Payment):
 
     column_sortable_list = [
         "payment.id"
-
     ]
 
     column_labels = {
         "user": "User",
         "course": "Course",
-        "amount":"Amount",
-        "status":"Status",
-        "pait_at":"Pait_at"
-
-
+        "amount": "Amount",
+        "status": "Status",
+        "paid_at": "Paid_at"
     }
 
     async def on_model_change(self, request, model, form, is_created):
@@ -48,10 +38,3 @@ class PaymentAdmin(ModelView, model=Payment):
             model.paid_at = datetime.now(pytz.timezone("Asia/Tashkent"))
         else:
             model.paid_at = None
-
-
-    def is_visible(self, request: Request) -> bool:
-        return True
-
-    def is_accessible(self, request: Request) -> bool:
-        return True

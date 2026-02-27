@@ -1,8 +1,8 @@
-from sqladmin import ModelView
 from models.course import Course
-from starlette.requests import Request
+from admin_panel._secure_base import SecureAdminView
 
-class CourseAdmin(ModelView, model=Course):
+
+class CourseAdmin(SecureAdminView, model=Course):
     column_list = [
         "name", "description", "data_time"
     ]
@@ -17,18 +17,10 @@ class CourseAdmin(ModelView, model=Course):
 
     column_sortable_list = [
         "Course.id"
-
     ]
 
     column_labels = {
         "name": "Name",
         "description": "Description",
         "data_time": "Data_time",
-
     }
-
-    def is_visible(self, request: Request) -> bool:
-        return True
-
-    def is_accessible(self, request: Request) -> bool:
-        return True

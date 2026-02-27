@@ -1,10 +1,8 @@
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Form, UploadFile, File
 from sqlalchemy.orm import Session, joinedload
-from functions.courses import update_courses,delete_courses,create_courses
+from functions.courses import update_courses, delete_courses, create_courses
 from models.course import Course
-from models.section import Section
-from models.lesson import Lesson
 from models.course_image import CourseImage
 from routers.auth import get_current_user
 from schemas.users import CreateUser
@@ -16,20 +14,11 @@ courses_router = APIRouter(tags=["Course"])
 
 
 @courses_router.get("/get_courses")
-def get_courses(
-    name: Optional[str] = None,
-    db: Session = Depends(database)
-):
-    query = db.query(Course).options(
-        joinedload(Course.sections).joinedload(Section.lessons),
-        joinedload(Course.images)
-    )
+def get_courses(name: Optional[str] = None, db: Session = Depends(database)):
+    query = db.query(Course).options(joinedload(Course.sections), joinedload(Course.images))
     if name:
-        query = query.filter(Course.name == name)
-
+        query = query.filter(Course.name.ilike(f"%{name}%"))
     return query.all()
-
-
 
 
 @courses_router.post('/create_course')
@@ -47,39 +36,40 @@ def create_course(
     db: Session = Depends(database),
     current_user: CreateUser = Depends(get_current_user)
 ):
-    # Kurs yaratish
     form = CreateCourses(
-        name=name,
-        description=description,
-        category=category,
-        duration=duration,
-        level=level,
-        price=price,
-        teacher=teacher,
-        lessons=lessons,
-        views=views
-
+        name=name, description=description, category=category,
+        duration=duration, level=level, price=price,
+        teacher=teacher, lessons=lessons, views=views
     )
     course = create_courses(form, db, current_user)
 
-
-    # Rasmlar yuklash
     if images:
         for img in images:
-            filename = save_image(img)
-            new_image = CourseImage(course_id=course.id, image=filename)
-            db.add(new_image)
+            if img.filename:
+                filename = save_image(img)
+                new_image = CourseImage(course_id=course.id, image=filename)
+                db.add(new_image)
         db.commit()
 
     return {"msg": "Course created with images", "course_id": course.id}
 
-@courses_router.put('/update_apartment')
-def update_course(ident : int,form:UpdateCourses,db:Session = Depends(database),
-                      current_user: CreateUser = Depends(get_current_user)):
-    return update_courses(ident,form,db,current_user)
+
+# ✅ FIX: /update_apartment → /update_course (frontend bilan mos)
+@courses_router.put('/update_course')
+def update_course(
+    ident: int,
+    form: UpdateCourses,
+    db: Session = Depends(database),
+    current_user: CreateUser = Depends(get_current_user)
+):
+    return update_courses(ident, form, db, current_user)
 
 
-@courses_router.delete('/delete_apartment')
-def delete_course(ident: int,db:Session = Depends(database),
-                      current_user: CreateUser = Depends(get_current_user)):
-    return delete_courses(ident,db,current_user)
+# ✅ FIX: /delete_apartment → /delete_course (frontend bilan mos)
+@courses_router.delete('/delete_course')
+def delete_course(
+    ident: int,
+    db: Session = Depends(database),
+    current_user: CreateUser = Depends(get_current_user)
+):
+    return delete_courses(ident, db, current_user)
